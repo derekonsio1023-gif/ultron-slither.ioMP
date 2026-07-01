@@ -17,7 +17,7 @@ process.argv.forEach(function(val) {
 
 // FIX CONFIG PATH
 var defaultConfig = path.join(__dirname, 'configs/GameServer.json');
-var configPath = fs.existsSync(gConfig) ? gConfig : defaultConfig;
+var configPath = gConfig && fs.existsSync(gConfig)
 
 // Run server
 if (runClient) {
