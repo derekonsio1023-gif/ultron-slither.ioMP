@@ -1,31 +1,20 @@
-var fs = require('fs');
 var path = require('path');
+var fs = require('fs');
 
-// Init variables
-var regServer = /^--gServer=(.*)/;
-var runClient = false;
-var gConfig = false;
+// Import GameServer
+var GameServer = require('./GameServer');
 
-// Parse args
-process.argv.forEach(function(val) {
-    if (val == '--client') {
-        runClient = true;
-    } else if (regServer.test(val)) {
-        gConfig = regServer.exec(val)[1];
-    }
-});
+// Config SIEMPRE válida (IMPORTANTE)
+var configPath = path.join(__dirname, 'configs/GameServer.json');
 
-// FIX CONFIG PATH
-var defaultConfig = path.join(__dirname, 'configs/GameServer.json');
-var configPath = gConfig && fs.existsSync(gConfig)
-
-// Run server
-if (runClient) {
-    var ClientServer = require('./ClientServer');
-    var clientServer = new ClientServer();
-    clientServer.start();
-} else {
-    var GameServer = require('./GameServer');
-    var gameServer = new GameServer(configPath);
-    gameServer.start();
+// Comprobación opcional (por seguridad)
+if (!fs.existsSync(configPath)) {
+    console.error("[ERROR] No existe config:", configPath);
+    process.exit(1);
 }
+
+// Iniciar servidor
+var gameServer = new GameServer(configPath);
+gameServer.start();
+
+console.log("[Game] Game Server started");
