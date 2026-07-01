@@ -21,8 +21,37 @@ function GameServer( confile ) {
 
 module.exports = GameServer;
 
-GameServer.prototype.start = function() {
-	console.log('\u001B[31m[Game]\u001B[0m Game Server started');
+GameServer.prototype.start = function () {
+    var WebSocket = require('ws');
+    var http = require('http');
+
+    const PORT = process.env.PORT || 3000;
+
+    // HTTP server (OBLIGATORIO para Render)
+    this.server = http.createServer(function (req, res) {
+        res.writeHead(200);
+        res.end("Ultron Slither Server Running");
+    });
+
+    // WebSocket server
+    this.wss = new WebSocket.Server({ server: this.server });
+
+    this.wss.on('connection', (ws) => {
+        console.log("[Game] Client connected");
+
+        ws.on('message', (msg) => {
+            // aquí va la lógica del juego
+        });
+
+        ws.on('close', () => {
+            console.log("[Game] Client disconnected");
+        });
+    });
+
+    // IMPORTANTE: mantener vivo el server
+    this.server.listen(PORT, () => {
+        console.log('\x1b[31m[Game]\x1b[0m Server running on port ' + PORT);
+    });
 };
 
 GameServer.prototype.loadConfig = function( confile ) {
