@@ -24,6 +24,11 @@ if( runClient ){
 	clientServer.start();
 } else {
 	var GameServer = require('./GameServer');
-	var gameServer = new GameServer( ( fs.existsSync( gConfig ) ? gConfig : './configs/GameServer.json' ) );
+	var path = require('path');
+
+var defaultConfig = path.join(__dirname, 'configs/GameServer.json');
+
+var gameServer = new GameServer(
+    fs.existsSync(gConfig) ? gConfig : defaultConfig
 	gameServer.start();
 }
